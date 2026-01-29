@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp1
+﻿namespace CasinoMinigames
 {
     /// <summary>
     /// Main entry point for the Casino Minigame Collection application.

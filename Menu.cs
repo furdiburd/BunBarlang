@@ -1,4 +1,4 @@
-namespace ConsoleApp1
+namespace CasinoMinigames
 {
     /// <summary>
     /// Handles the main menu display and navigation.
@@ -13,10 +13,22 @@ namespace ConsoleApp1
         /// <summary>
         /// Initializes a new instance of the Menu class.
         /// </summary>
-        /// <param name="games">List of games to display in the menu.</param>
+        /// <param name="games">List of games to display in the menu. Must not be null or empty.</param>
+        /// <exception cref="ArgumentNullException">Thrown when games is null.</exception>
+        /// <exception cref="ArgumentException">Thrown when games list is empty.</exception>
         public Menu(List<IGame> games)
         {
-            _games = games ?? new List<IGame>();
+            if (games == null)
+            {
+                throw new ArgumentNullException(nameof(games), "Games list cannot be null.");
+            }
+
+            if (games.Count == 0)
+            {
+                throw new ArgumentException("Games list cannot be empty. At least one game must be provided.", nameof(games));
+            }
+
+            _games = games;
             _selectedIndex = 0;
         }
 

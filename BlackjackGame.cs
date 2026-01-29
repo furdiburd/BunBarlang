@@ -1,4 +1,4 @@
-namespace ConsoleApp1
+namespace CasinoMinigames
 {
     /// <summary>
     /// Blackjack game implementation (placeholder).
