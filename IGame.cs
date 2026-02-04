@@ -1,18 +1,17 @@
 namespace CasinoMinigames
 {
     /// <summary>
-    /// Interface for all casino games.
-    /// Implement this interface to add new games to the casino.
+    /// Interface for all casino games. Implement this to add a new game to the menu.
     /// </summary>
     public interface IGame
     {
         /// <summary>
-        /// Gets the name of the game as displayed in the menu.
+        /// Display name shown in the menu.
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        /// Starts the game. This method is called when the user selects the game from the menu.
+        /// Runs the game loop when selected from the menu.
         /// </summary>
         void Play();
     }

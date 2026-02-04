@@ -3,22 +3,15 @@ namespace CasinoMinigames
     /// <summary>
     /// Roulette game implementation (placeholder).
     /// </summary>
-    public class RouletteGame : IGame
+    public class RouletteGame : GameBase
     {
-        public string Name => "Roulette";
+        public override string Name => "Roulette";
 
-        public void Play()
+        protected override string Description => "Roulette is coming soon. Place your bets later!";
+
+        protected override void RunGame()
         {
-            Console.Clear();
-            Console.WriteLine("=================================");
-            Console.WriteLine("     ROULETTE GAME STARTED       ");
-            Console.WriteLine("=================================");
-            Console.WriteLine();
-            Console.WriteLine("Welcome to Roulette!");
             Console.WriteLine("This is a placeholder for the Roulette game.");
-            Console.WriteLine();
-            Console.WriteLine("Press any key to return to the main menu...");
-            Console.ReadKey(true);
         }
     }
 }

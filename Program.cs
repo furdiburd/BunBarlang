@@ -11,6 +11,7 @@
             // Initialize all available games
             var games = new List<IGame>
             {
+                new FarkleGame(),
                 new PokerGame(),
                 new RouletteGame(),
                 new BlackjackGame()
