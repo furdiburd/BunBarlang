@@ -1,15 +1,12 @@
 ﻿namespace CasinoMinigames
 {
-    /// <summary>
-    /// Main entry point for the Casino Minigame Collection application.
-    /// Keeps the main function minimal by delegating to modular classes.
-    /// </summary>
     internal class Program
     {
         static void Main(string[] args)
         {
-            // Initialize all available games
-            var games = new List<IGame>
+            var player = new Player(10_000);
+
+            var games = new List<GameBase>
             {
                 new FarkleGame(),
                 new PokerGame(),
@@ -17,8 +14,7 @@
                 new BlackjackGame()
             };
 
-            // Create and run the main menu
-            var menu = new Menu(games);
+            var menu = new Menu(games, player);
             menu.Run();
         }
     }

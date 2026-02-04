@@ -1,9 +1,8 @@
 namespace CasinoMinigames
 {
-    /// <summary>
-    /// Kingdom Come: Deliverance style Farkle.
-    /// First to 2000 points wins. Each roll is auto-scored.
-    /// </summary>
+    // Farkle with Kingdom Come: Deliverance rules
+    // First to 2000 points wins 
+    // Each roll is auto-scored
     public class FarkleGame : GameBase
     {
         public override string Name => "Farkle";
@@ -17,7 +16,7 @@ namespace CasinoMinigames
         private const int TargetScore = 2000;
         private readonly Random _rng = new();
 
-        protected override void RunGame()
+        protected override GameOutcome RunGame(int bet)
         {
             int playerScore = 0;
             int dealerScore = 0;
@@ -26,14 +25,14 @@ namespace CasinoMinigames
             while (playerScore < TargetScore && dealerScore < TargetScore)
             {
                 Console.WriteLine($"-- Turn {turn} --");
-                playerScore += TakeTurn("You");
+                playerScore += TakeTurn("You", isPlayer: true);
                 DisplayScoreboard(playerScore, dealerScore);
                 if (playerScore >= TargetScore)
                 {
                     break;
                 }
 
-                dealerScore += TakeTurn("Dealer");
+                dealerScore += TakeTurn("Dealer", isPlayer: false);
                 DisplayScoreboard(playerScore, dealerScore);
 
                 turn++;
@@ -48,37 +47,80 @@ namespace CasinoMinigames
                 }
             }
 
-            Console.WriteLine(playerScore >= TargetScore ? "You win! ??" : "Dealer wins. Better luck next time!");
+            bool playerWins = playerScore >= TargetScore;
+            Console.WriteLine(playerWins ? "You win!" : "Dealer wins. Better luck next time!");
+
+            return new GameOutcome(playerWins ? GameResult.Win : GameResult.Lose);
         }
 
-        private int TakeTurn(string name)
+        private int TakeTurn(string name, bool isPlayer)
         {
-            Console.WriteLine($"{name} rolls...");
-            var dice = RollDice(6);
-            var result = ScoreRoll(dice);
+            int diceToRoll = 6;
+            int turnScore = 0;
+            bool rolling = true;
 
-            Console.WriteLine($"Rolled: {string.Join(", ", dice)}");
-
-            if (result.IsFarkle)
+            while (rolling)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Farkle! No scoring dice this turn.");
+                Console.WriteLine($"{name} rolls {diceToRoll} dice...");
+                var dice = RollDice(diceToRoll);
+                var result = ScoreRoll(dice);
+
+                Console.WriteLine($"Rolled: {string.Join(", ", dice)}");
+
+                if (result.IsFarkle)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Farkle! No scoring dice this turn.");
+                    Console.ResetColor();
+                    Console.WriteLine();
+                    return 0;
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Score this roll: {result.Score}");
                 Console.ResetColor();
+
+                if (!string.IsNullOrWhiteSpace(result.Breakdown))
+                {
+                    Console.WriteLine($"Details: {result.Breakdown}");
+                }
+
+                turnScore += result.Score;
+                int remainingDice = diceToRoll - result.UsedDice;
+
+                // all dice scored, roll all 6 again if continuing
+                if (remainingDice == 0)
+                {
+                    remainingDice = 6;
+                    Console.WriteLine("Hot dice! You get to roll all six again if you continue.");
+                }
+
+                Console.WriteLine($"Turn total so far: {turnScore}");
                 Console.WriteLine();
-                return 0;
+
+                if (isPlayer)
+                {
+                    rolling = PromptPlayerRollAgain(remainingDice);
+                }
+                else
+                {
+                    rolling = DealerRollAgain(turnScore, remainingDice);
+                    Console.WriteLine(rolling
+                        ? "Dealer chooses to roll again..."
+                        : "Dealer banks the points.");
+                }
+
+                if (rolling)
+                {
+                    diceToRoll = remainingDice;
+                    Console.WriteLine();
+                    continue;
+                }
+
+                return turnScore;
             }
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Score this roll: {result.Score}");
-            Console.ResetColor();
-
-            if (!string.IsNullOrWhiteSpace(result.Breakdown))
-            {
-                Console.WriteLine($"Details: {result.Breakdown}");
-            }
-
-            Console.WriteLine();
-            return result.Score;
+            return turnScore;
         }
 
         private int[] RollDice(int count) => Enumerable.Range(0, count).Select(_ => _rng.Next(1, 7)).ToArray();
@@ -96,17 +138,17 @@ namespace CasinoMinigames
 
             if (IsStraight(counts))
             {
-                return new RollResult(dice, 1500, false, "Straight (1-6): 1500");
+                return new RollResult(dice, 1500, false, "Straight (1-6): 1500", dice.Length);
             }
 
             if (IsThreePairs(counts))
             {
-                return new RollResult(dice, 1500, false, "Three pairs: 1500");
+                return new RollResult(dice, 1500, false, "Three pairs: 1500", dice.Length);
             }
 
             if (IsTwoTriplets(counts))
             {
-                return new RollResult(dice, 2500, false, "Two triplets: 2500");
+                return new RollResult(dice, 2500, false, "Two triplets: 2500", dice.Length);
             }
 
             for (int face = 1; face <= 6; face++)
@@ -116,7 +158,7 @@ namespace CasinoMinigames
                     score += 3000;
                     breakdown.Add($"Six of a kind ({face}s): 3000");
                     counts[face] = 0;
-                    return FinalizeScore(dice, score, breakdown);
+                    return FinalizeScore(dice, score, breakdown, counts);
                 }
             }
 
@@ -168,13 +210,15 @@ namespace CasinoMinigames
                 counts[5] = 0;
             }
 
-            return FinalizeScore(dice, score, breakdown);
+            return FinalizeScore(dice, score, breakdown, counts);
         }
 
-        private static RollResult FinalizeScore(int[] dice, int score, List<string> breakdown)
+        private static RollResult FinalizeScore(int[] dice, int score, List<string> breakdown, int[] counts)
         {
             string detail = breakdown.Count == 0 ? string.Empty : string.Join(", ", breakdown);
-            return new RollResult(dice, score, score == 0, detail);
+            int unscored = counts.Skip(1).Sum();
+            int usedDice = dice.Length - unscored;
+            return new RollResult(dice, score, score == 0, detail, usedDice);
         }
 
         private static bool IsStraight(int[] counts) => counts.Skip(1).All(c => c == 1);
@@ -192,6 +236,39 @@ namespace CasinoMinigames
             Console.WriteLine();
         }
 
-        private record RollResult(int[] Dice, int Score, bool IsFarkle, string Breakdown);
+        private bool PromptPlayerRollAgain(int remainingDice)
+        {
+            while (true)
+            {
+                Console.Write(remainingDice == 6
+                    ? "Roll all six again? (r = roll, b = bank): "
+                    : $"Roll remaining {remainingDice} dice? (r = roll, b = bank): ");
+                var key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.R)
+                {
+                    return true;
+                }
+
+                if (key == ConsoleKey.B)
+                {
+                    return false;
+                }
+
+                Console.WriteLine("Invalid choice. Press r to roll or b to bank.");
+            }
+        }
+
+        private bool DealerRollAgain(int turnScore, int remainingDice)
+        {
+            //  dealer banks at 300 or more, or if only one die remains
+            if (turnScore >= 300 || remainingDice <= 1) // 400 was too reckeless, switched to 300
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private record RollResult(int[] Dice, int Score, bool IsFarkle, string Breakdown, int UsedDice);
     }
 }

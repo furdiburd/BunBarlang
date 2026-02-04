@@ -1,17 +1,15 @@
 namespace CasinoMinigames
 {
-    /// <summary>
-    /// Poker game implementation (placeholder).
-    /// </summary>
     public class PokerGame : GameBase
     {
         public override string Name => "Poker";
 
-        protected override string Description => "Poker is coming soon. Stay tuned!";
+        protected override string Description => "Poker - To be implemented";
 
-        protected override void RunGame()
+        protected override GameOutcome RunGame(int bet)
         {
             Console.WriteLine("This is a placeholder for the Poker game.");
+            return new GameOutcome(GameResult.Push);
         }
     }
 }

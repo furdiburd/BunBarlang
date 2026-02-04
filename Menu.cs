@@ -1,22 +1,14 @@
 namespace CasinoMinigames
 {
-    /// <summary>
-    /// Handles the main menu display and navigation.
-    /// Supports arrow key navigation and game selection.
-    /// </summary>
     public class Menu
     {
-        private readonly List<IGame> _games;
+        private readonly List<GameBase> _games;
+        private readonly Player _player;
         private int _selectedIndex;
         private const string QuitOption = "Quit";
 
-        /// <summary>
-        /// Initializes a new instance of the Menu class.
-        /// </summary>
-        /// <param name="games">List of games to display in the menu. Must not be null or empty.</param>
-        /// <exception cref="ArgumentNullException">Thrown when games is null.</exception>
-        /// <exception cref="ArgumentException">Thrown when games list is empty.</exception>
-        public Menu(List<IGame> games)
+        // Initializes a new instance of the Menu class.
+        public Menu(List<GameBase> games, Player player)
         {
             if (games == null)
             {
@@ -29,29 +21,33 @@ namespace CasinoMinigames
             }
 
             _games = games;
+            _player = player ?? throw new ArgumentNullException(nameof(player));
             _selectedIndex = 0;
         }
 
-        /// <summary>
-        /// Runs the main menu loop, handling user input and game selection.
-        /// </summary>
         public void Run()
         {
             bool running = true;
 
             while (running)
             {
+                if (_player.Credits <= 0)
+                {
+                    ShowBankruptScreen();
+                    return;
+                }
+
                 DisplayMenu();
                 var key = Console.ReadKey(true);
 
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        MoveSelectionUp();
+                        AdjustSelection(-1);
                         break;
 
                     case ConsoleKey.DownArrow:
-                        MoveSelectionDown();
+                        AdjustSelection(1);
                         break;
 
                     case ConsoleKey.Enter:
@@ -61,9 +57,7 @@ namespace CasinoMinigames
             }
         }
 
-        /// <summary>
-        /// Displays the menu with the current selection highlighted.
-        /// </summary>
+        // Display the menu with the current selection highlighted.
         private void DisplayMenu()
         {
             Console.Clear();
@@ -71,6 +65,7 @@ namespace CasinoMinigames
             Console.WriteLine("      CASINO MINIGAME MENU       ");
             Console.WriteLine("=================================");
             Console.WriteLine();
+            Console.WriteLine($"Credits: {_player.Credits}");
             Console.WriteLine("Use ↑/↓ arrow keys to navigate");
             Console.WriteLine("Press Enter to select");
             Console.WriteLine();
@@ -103,37 +98,15 @@ namespace CasinoMinigames
             }
         }
 
-        /// <summary>
-        /// Moves the selection up in the menu.
-        /// </summary>
-        private void MoveSelectionUp()
+        // Moves the selection up or down, wrapping across game entries and the quit option
+        private void AdjustSelection(int delta)
         {
-            _selectedIndex--;
-            if (_selectedIndex < 0)
-            {
-                _selectedIndex = _games.Count; // Wrap to quit option
-            }
+            int totalOptions = _games.Count + 1; // games + Quit
+            _selectedIndex = (_selectedIndex + delta + totalOptions) % totalOptions;
         }
 
-        /// <summary>
-        /// Moves the selection down in the menu.
-        /// </summary>
-        private void MoveSelectionDown()
-        {
-            _selectedIndex++;
-            if (_selectedIndex > _games.Count)
-            {
-                _selectedIndex = 0; // Wrap to first game
-            }
-        }
-
-        /// <summary>
-        /// Handles the user's menu selection.
-        /// </summary>
-        /// <returns>True if the menu should continue running, false to exit.</returns>
         private bool HandleSelection()
         {
-            // Check if quit option is selected
             if (_selectedIndex == _games.Count)
             {
                 Console.Clear();
@@ -142,8 +115,21 @@ namespace CasinoMinigames
             }
 
             // Play the selected game
-            _games[_selectedIndex].Play();
+            _games[_selectedIndex].Play(_player);
             return true;
+        }
+
+        private void ShowBankruptScreen()
+        {
+            Console.Clear();
+            Console.WriteLine("=================================");
+            Console.WriteLine("       YOU WENT BANKRUPT         ");
+            Console.WriteLine("=================================");
+            Console.WriteLine();
+            Console.WriteLine("You have no credits left. Thanks for playing!");
+            Console.WriteLine();
+            Console.WriteLine("Press any key to exit..."); // Better than instant exit
+            Console.ReadKey(true);
         }
     }
 }
