@@ -57,7 +57,6 @@ namespace CasinoMinigames
             }
         }
 
-        // Display the menu with the current selection highlighted.
         private void DisplayMenu()
         {
             Console.Clear();
@@ -70,7 +69,6 @@ namespace CasinoMinigames
             Console.WriteLine("Press Enter to select");
             Console.WriteLine();
 
-            // Display game options
             for (int i = 0; i < _games.Count; i++)
             {
                 if (i == _selectedIndex)
@@ -98,7 +96,6 @@ namespace CasinoMinigames
             }
         }
 
-        // Moves the selection up or down, wrapping across game entries and the quit option
         private void AdjustSelection(int delta)
         {
             int totalOptions = _games.Count + 1; // games + Quit
