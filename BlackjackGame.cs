@@ -76,7 +76,6 @@ namespace CasinoMinigames
             playerHand.AddCard(deck.Draw());
             dealerHand.AddCard(deck.Draw());
         }
-
         private static GameOutcome? TryResolveImmediateBlackjack(int bet, BlackjackHand playerHand, BlackjackHand dealerHand)
         {
             bool playerBj = playerHand.IsBlackjack;
