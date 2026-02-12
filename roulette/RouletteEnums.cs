@@ -1,45 +1,45 @@
 namespace CasinoMinigames
 {
-    public enum RouletteColor
-    {
-        Green,
-        Red,
-        Black
-    }
+	public enum RouletteColor
+	{
+		Zöld,
+		Piros,
+		Fekete
+	}
 
-    public enum RouletteBetKind
-    {
-        StraightUp,
-        Color,
-        EvenOdd,
-        HighLow,
-        Dozen,
-        Column
-    }
+	public enum RouletteBetKind
+	{
+		SzimplaTét,
+		Szín,
+		PárosPáratlan,
+		AlacsonyMagas,
+		Tucat,
+		Oszlop
+	}
 
-    public enum RouletteEvenOdd
-    {
-        Even,
-        Odd
-    }
+	public enum RouletteEvenOdd
+	{
+		Páros,
+		Páratlan
+	}
 
-    public enum RouletteHighLow
-    {
-        Low,
-        High
-    }
+	public enum RouletteHighLow
+	{
+		Alacsony,
+		Magas
+	}
 
-    public enum RouletteDozen
-    {
-        First,
-        Second,
-        Third
-    }
+	public enum RouletteDozen
+	{
+		Elsõ,
+		Második,
+		Harmadik
+	}
 
-    public enum RouletteColumn
-    {
-        First,
-        Second,
-        Third
-    }
+	public enum RouletteColumn
+	{
+		Elsõ,
+		Második,
+		Harmadik
+	}
 }

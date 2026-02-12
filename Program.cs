@@ -9,8 +9,7 @@
             var games = new List<GameBase>
             {
                 new FarkleGame(),
-                new RouletteGame(),
-                new BlackjackGame()
+                new RouletteGame()
             };
 
             var menu = new Menu(games, player);

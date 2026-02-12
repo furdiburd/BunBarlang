@@ -16,12 +16,12 @@ namespace CasinoMinigames
             }
 
             if (player.Credits <= 0)
-            {
+            { // mindig hamarabb mész csõdbe mint hogy ez lefusson
                 Console.Clear();
                 RenderHeader();
-                Console.WriteLine("You are out of credits. Add more to keep playing.");
+                Console.WriteLine("Elfogyott a kredited. A játék folytatásához tölts fel többet.");
                 Console.WriteLine();
-                Console.WriteLine("Press any key to return to the main menu...");
+                Console.WriteLine("Nyomjon meg egy tetszõleges billentyût a fõmenübe való visszatéréshez...");
                 Console.ReadKey(true);
                 return;
             }
@@ -41,7 +41,7 @@ namespace CasinoMinigames
                 Console.WriteLine();
             }
 
-            Console.WriteLine($"Bet placed: {bet} credits");
+            Console.WriteLine($"Tét értéke: {bet} kredit");
             Console.WriteLine();
 
             var outcome = RunGame(bet);
@@ -57,25 +57,25 @@ namespace CasinoMinigames
                 case GameResult.Win:
                     player.AddCredits(winAmount);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"You won {winAmount} credits!");
+                    Console.WriteLine($"Ön nyert {winAmount} kreditet!");
                     Console.ResetColor();
                     break;
 
                 case GameResult.Lose:
                     player.DeductCredits(bet);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"You lost {bet} credits.");
+                    Console.WriteLine($"Ön elvesztett {bet} kreditet.");
                     Console.ResetColor();
                     break;
 
                 case GameResult.Push:
-                    Console.WriteLine("Push. No credits exchanged.");
+                    Console.WriteLine("Döntetlen, nincs kredit változás.");
                     break;
             }
 
-            Console.WriteLine($"Current credits: {player.Credits}");
+            Console.WriteLine($"Jelenlegi kreditek: {player.Credits}");
             Console.WriteLine();
-            Console.WriteLine("Press any key to return to the main menu...");
+            Console.WriteLine("Nyomjon meg egy tetszõleges billentyût a fõmenübe való visszatéréshez...");
             Console.ReadKey(true);
         }
 
@@ -84,7 +84,7 @@ namespace CasinoMinigames
         protected void RenderHeader()
         {
             Console.WriteLine("=================================");
-            Console.WriteLine($"        {Name.ToUpper()} GAME        ");
+            Console.WriteLine($"        {Name.ToUpper()} JÁTÉK        ");
             Console.WriteLine("=================================");
             Console.WriteLine();
         }
@@ -95,13 +95,13 @@ namespace CasinoMinigames
             {
                 Console.Clear();
                 RenderHeader();
-                Console.WriteLine($"Credits: {player.Credits}");
-                Console.Write("Enter your bet (or 0 to cancel): ");
+                Console.WriteLine($"Kreditek: {player.Credits}");
+                Console.Write("Adja meg a tétet (vagy 0 a kilépéshez): ");
 
                 var input = Console.ReadLine();
                 if (!int.TryParse(input, out int bet))
                 {
-                    Console.WriteLine("Invalid number. Press any key to retry...");
+                    Console.WriteLine("Érvénytelen szám. A folytatáshoz nyomjon meg egy tetszõleges billentyût...");
                     Console.ReadKey(true);
                     continue;
                 }
@@ -113,8 +113,8 @@ namespace CasinoMinigames
 
                 if (!player.CanBet(bet))
                 {
-                    Console.WriteLine("Bet must be positive and no more than your current credits.");
-                    Console.WriteLine("Press any key to retry...");
+                    Console.WriteLine("A tétnek pozitívnak kell lennie, és nem haladhatja meg a jelenlegi egyenlegedet.");
+                    Console.WriteLine("Nyomjon meg egy tetszõleges billentyût az újrapróbálkozáshoz...");
                     Console.ReadKey(true);
                     continue;
                 }

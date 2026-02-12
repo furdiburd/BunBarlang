@@ -1,19 +1,16 @@
 namespace CasinoMinigames
 {
-    // Farkle with Kingdom Come: Deliverance rules
-    // First to 2000 points wins 
-    // Each roll is auto-scored
     public class FarkleGame : GameBase
     {
         public override string Name => "Farkle";
 
         protected override string Description =>
-            "Roll 6 dice. Scoring: straight (1-6) 1500, three pairs 1500, two triplets 2500, " +
-            "six of a kind 3000, five of a kind 2000, four of a kind 1000 (ones 2000), " +
-            "three of a kind ones 1000 / others face*100, single 1 = 100, single 5 = 50. " +
-            "No scoring dice = Farkle (0 for the turn). First to 2000 points wins.";
+            "Dobj 6 kockával. Pontozás: sor (1-6) 1500, három pár 1500, két hármas iker 2500, " +
+			"hat azonos 3000, öt azonos 2000, négy azonos 1000 (egyeseknél 2000), " +
+			"három azonos egyes 1000 / egyéb számoknál érték*100, egy darab 1-es = 100, egy darab 5-ös = 50. " +
+			"Nincs pontot érõ kocka = Farkle (0 pont a körre). Az nyer, aki elõször eléri a 2000 pontot.";
 
-        private const int TargetScore = 2000;
+		private const int TargetScore = 2000;
         private readonly Random _rng = new();
 
         protected override GameOutcome RunGame(int bet)
@@ -24,19 +21,19 @@ namespace CasinoMinigames
 
             while (playerScore < TargetScore && dealerScore < TargetScore)
             {
-                Console.WriteLine($"-- Turn {turn} --");
-                playerScore += TakeTurn("You", isPlayer: true);
+                Console.WriteLine($"-- Menet {turn} --");
+                playerScore += TakeTurn("Te", isPlayer: true);
                 DisplayScoreboard(playerScore, dealerScore);
                 if (playerScore >= TargetScore)
                 {
                     break;
                 }
 
-                dealerScore += TakeTurn("Dealer", isPlayer: false);
+                dealerScore += TakeTurn("Osztó", isPlayer: false);
                 DisplayScoreboard(playerScore, dealerScore);
 
                 turn++;
-                Console.WriteLine("Press any key for the next turn...");
+                Console.WriteLine("Üss le egy billentyût a folytatáshoz...");
                 Console.ReadKey(true);
                 Console.Clear();
                 RenderHeader();
@@ -48,7 +45,7 @@ namespace CasinoMinigames
             }
 
             bool playerWins = playerScore >= TargetScore;
-            Console.WriteLine(playerWins ? "You win!" : "Dealer wins. Better luck next time!");
+            Console.WriteLine(playerWins ? "Te nyertél!" : "Osztó nyert. Sok szerencsét a következõ menethez!");
 
             return new GameOutcome(playerWins ? GameResult.Win : GameResult.Lose);
         }
@@ -61,28 +58,28 @@ namespace CasinoMinigames
 
             while (rolling)
             {
-                Console.WriteLine($"{name} rolls {diceToRoll} dice...");
+                Console.WriteLine($"{name} dob {diceToRoll} kockákat...");
                 var dice = RollDice(diceToRoll);
                 var result = ScoreRoll(dice);
 
-                Console.WriteLine($"Rolled: {string.Join(", ", dice)}");
+                Console.WriteLine($"Dobott: {string.Join(", ", dice)}");
 
                 if (result.IsFarkle)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Farkle! No scoring dice this turn.");
+                    Console.WriteLine("Farkle! Nincsen pontot érõ kocka a dobásban.");
                     Console.ResetColor();
                     Console.WriteLine();
                     return 0;
                 }
 
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"Score this roll: {result.Score}");
+                Console.WriteLine($"Pontok ebben a dobásban: {result.Score}");
                 Console.ResetColor();
 
                 if (!string.IsNullOrWhiteSpace(result.Breakdown))
                 {
-                    Console.WriteLine($"Details: {result.Breakdown}");
+                    Console.WriteLine($"Részletek: {result.Breakdown}");
                 }
 
                 turnScore += result.Score;
@@ -92,10 +89,10 @@ namespace CasinoMinigames
                 if (remainingDice == 0)
                 {
                     remainingDice = 6;
-                    Console.WriteLine("Hot dice! You get to roll all six again if you continue.");
+                    Console.WriteLine("Forró kockák! Ha folytatod, újra dobhatsz mind a hattal.");
                 }
 
-                Console.WriteLine($"Turn total so far: {turnScore}");
+                Console.WriteLine($"Fordulók eddig: {turnScore}");
                 Console.WriteLine();
 
                 if (isPlayer)
@@ -106,9 +103,9 @@ namespace CasinoMinigames
                 {
                     rolling = DealerRollAgain(turnScore, remainingDice);
                     Console.WriteLine(rolling
-                        ? "Dealer chooses to roll again..."
-                        : "Dealer banks the points.");
-                }
+                        ? "Az osztó az újradobás mellett dönt..."
+						: "Az osztó elteszi a pontokat.");
+				}
 
                 if (rolling)
                 {
@@ -138,17 +135,17 @@ namespace CasinoMinigames
 
             if (IsStraight(counts))
             {
-                return new RollResult(dice, 1500, false, "Straight (1-6): 1500", dice.Length);
+                return new RollResult(dice, 1500, false, "Sor (1-6): 1500", dice.Length);
             }
 
             if (IsThreePairs(counts))
             {
-                return new RollResult(dice, 1500, false, "Three pairs: 1500", dice.Length);
+                return new RollResult(dice, 1500, false, "Három pár: 1500", dice.Length);
             }
 
             if (IsTwoTriplets(counts))
             {
-                return new RollResult(dice, 2500, false, "Two triplets: 2500", dice.Length);
+                return new RollResult(dice, 2500, false, "Kettõ tripla: 2500", dice.Length);
             }
 
             for (int face = 1; face <= 6; face++)
@@ -156,7 +153,7 @@ namespace CasinoMinigames
                 if (counts[face] == 6)
                 {
                     score += 3000;
-                    breakdown.Add($"Six of a kind ({face}s): 3000");
+                    breakdown.Add($"Hat ugyanolyan ({face}s): 3000");
                     counts[face] = 0;
                     return FinalizeScore(dice, score, breakdown, counts);
                 }
@@ -167,7 +164,7 @@ namespace CasinoMinigames
                 if (counts[face] == 5)
                 {
                     score += 2000;
-                    breakdown.Add($"Five of a kind ({face}s): 2000");
+                    breakdown.Add($"Öt ugyanolyan ({face}s): 2000");
                     counts[face] = 0;
                 }
             }
@@ -178,7 +175,7 @@ namespace CasinoMinigames
                 {
                     int fourScore = face == 1 ? 2000 : 1000;
                     score += fourScore;
-                    breakdown.Add($"Four of a kind ({face}s): {fourScore}");
+                    breakdown.Add($"Négy ugyanabból ({face}s): {fourScore}");
                     counts[face] = 0;
                 }
             }
@@ -189,7 +186,7 @@ namespace CasinoMinigames
                 {
                     int tripleScore = face == 1 ? 1000 : face * 100;
                     score += tripleScore;
-                    breakdown.Add($"Three of a kind ({face}s): {tripleScore}");
+                    breakdown.Add($"Hármas pár ({face}s): {tripleScore}");
                     counts[face] -= 3;
                 }
             }
@@ -198,7 +195,7 @@ namespace CasinoMinigames
             {
                 int onesScore = counts[1] * 100;
                 score += onesScore;
-                breakdown.Add($"Single 1s: {onesScore}");
+                breakdown.Add($"Egyes egyesek: {onesScore}");
                 counts[1] = 0;
             }
 
@@ -206,7 +203,7 @@ namespace CasinoMinigames
             {
                 int fivesScore = counts[5] * 50;
                 score += fivesScore;
-                breakdown.Add($"Single 5s: {fivesScore}");
+                breakdown.Add($"Egyes ötösök: {fivesScore}");
                 counts[5] = 0;
             }
 
@@ -230,8 +227,8 @@ namespace CasinoMinigames
         private void DisplayScoreboard(int playerScore, int dealerScore)
         {
             Console.WriteLine("-------------------------------");
-            Console.WriteLine($"You:    {playerScore} pts");
-            Console.WriteLine($"Dealer: {dealerScore} pts");
+            Console.WriteLine($"Te:    {playerScore} pts");
+            Console.WriteLine($"Osztó: {dealerScore} pts");
             Console.WriteLine("-------------------------------");
             Console.WriteLine();
         }
@@ -241,9 +238,9 @@ namespace CasinoMinigames
             while (true)
             {
                 Console.Write(remainingDice == 6
-                    ? "Roll all six again? (r = roll, b = bank): "
-                    : $"Roll remaining {remainingDice} dice? (r = roll, b = bank): ");
-                var key = Console.ReadKey(true).Key;
+                    ? "Újradobod mind a hatot? (r = dobás, b = mentés): "
+					: $"Dobod a maradék {remainingDice} kockát? (r = dobás, b = mentés): ");
+				var key = Console.ReadKey(true).Key;
                 if (key == ConsoleKey.R)
                 {
                     return true;
@@ -254,7 +251,7 @@ namespace CasinoMinigames
                     return false;
                 }
 
-                Console.WriteLine("Invalid choice. Press r to roll or b to bank.");
+                Console.WriteLine("Érvénytelen választás. Nyomd meg az r gombot a dobáshoz, vagy a b gombot a mentéshez.");
             }
         }
 

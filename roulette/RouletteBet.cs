@@ -34,8 +34,8 @@ namespace CasinoMinigames
         {
             if (number < 0 || number > 36)
             {
-                throw new ArgumentOutOfRangeException(nameof(number), "Roulette number must be between 0 and 36.");
-            }
+				throw new ArgumentOutOfRangeException(nameof(number), "A rulett számnak 0 és 36 között kell lennie.");
+			}
 
             return new RouletteBet(RouletteBetKind.StraightUp, number: number);
         }
@@ -44,8 +44,8 @@ namespace CasinoMinigames
         {
             if (color == RouletteColor.Green)
             {
-                throw new ArgumentException("Green is not a valid color bet on European roulette.", nameof(color));
-            }
+				throw new ArgumentException("Az európai rultetten a zöld nem érvényes szín a fogadáshoz.", nameof(color));
+			}
 
             return new RouletteBet(RouletteBetKind.Color, color: color);
         }
@@ -136,14 +136,14 @@ namespace CasinoMinigames
         {
             return _kind switch
             {
-                RouletteBetKind.StraightUp => $"Number: {_number}",
-                RouletteBetKind.Color => $"Color: {_color}",
-                RouletteBetKind.EvenOdd => $"Even/Odd: {_evenOdd}",
-                RouletteBetKind.HighLow => $"Low/High: {_highLow}",
-                RouletteBetKind.Dozen => $"Dozen: {_dozen}",
-                RouletteBetKind.Column => $"Column: {_column}",
-                _ => _kind.ToString()
-            };
+				RouletteBetKind.StraightUp => $"Szám: {_number}",
+				RouletteBetKind.Color => $"Szín: {_color}",
+				RouletteBetKind.EvenOdd => $"Páros/Páratlan: {_evenOdd}",
+				RouletteBetKind.HighLow => $"Alacsony/Magas: {_highLow}",
+				RouletteBetKind.Dozen => $"Tucat: {_dozen}",
+				RouletteBetKind.Column => $"Oszlop: {_column}",
+				_ => _kind.ToString()
+			};
         }
     }
 }

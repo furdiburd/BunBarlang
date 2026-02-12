@@ -5,10 +5,10 @@ namespace CasinoMinigames
         public override string Name => "Roulette";
 
         protected override string Description =>
-            "European roulette (0-36). Choose ONE bet and spin the wheel. " +
-            "Payouts: number 35:1, red/black 1:1, even/odd 1:1, low/high 1:1, dozen 2:1, column 2:1.";
+            "Európai rulett (0-36). Válassz EGY tétet, és pörgesd meg a kereket. " +
+			"Kifizetések: szám 35:1, piros/fekete 1:1, páros/páratlan 1:1, kicsi/nagy 1:1, tucat 2:1, oszlop 2:1.";
 
-        private readonly Random _rng = new();
+		private readonly Random _rng = new();
 
         protected override GameOutcome RunGame(int bet)
         {
@@ -17,34 +17,34 @@ namespace CasinoMinigames
             RouletteBet? placedBet = PromptForBetSelection();
             if (placedBet == null)
             {
-                Console.WriteLine("Bet selection cancelled.");
-                return new GameOutcome(GameResult.Push);
-            }
+				Console.WriteLine("Tét kiválasztása megszakítva.");
+				return new GameOutcome(GameResult.Push);
+			}
 
-            Console.WriteLine($"Your bet: {placedBet}");
-            Console.WriteLine();
-            Console.WriteLine("Spinning...");
+			Console.WriteLine($"Téted: {placedBet}");
+			Console.WriteLine();
+			Console.WriteLine("Pörgetés...");
 
-            var pocket = wheel.Spin();
+			var pocket = wheel.Spin();
             RenderPocket(pocket);
 
             if (placedBet.TryGetProfit(bet, pocket, out int profit))
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"You win! Profit: {profit}");
-                Console.ResetColor();
+				Console.WriteLine($"Nyertél! Profit: {profit}");
+				Console.ResetColor();
                 return new GameOutcome(GameResult.Win, profit);
             }
 
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("You lose.");
+            Console.WriteLine("Vesztettél.");
             Console.ResetColor();
             return new GameOutcome(GameResult.Lose);
         }
 
         private static void RenderPocket(RoulettePocket pocket)
         {
-            Console.Write("Result: ");
+            Console.Write("Eredméy: ");
             ConsoleColor color = pocket.Color switch
             {
                 RouletteColor.Red => ConsoleColor.Red,
@@ -62,17 +62,17 @@ namespace CasinoMinigames
         {
             while (true)
             {
-                Console.WriteLine("Choose bet type:");
-                Console.WriteLine("  1) Number (0-36)       payout 35:1");
-                Console.WriteLine("  2) Red / Black         payout 1:1");
-                Console.WriteLine("  3) Even / Odd          payout 1:1 (0 loses)");
-                Console.WriteLine("  4) Low / High          payout 1:1 (0 loses)");
-                Console.WriteLine("  5) Dozen (1-12/13-24/25-36) payout 2:1 (0 loses)");
-                Console.WriteLine("  6) Column (1st/2nd/3rd) payout 2:1 (0 loses)");
-                Console.WriteLine("  0) Cancel");
-                Console.Write("Select: ");
+				Console.WriteLine("Válasszon fogadási típust:");
+				Console.WriteLine("  1) Szám (0-36)         kifizetés 35:1");
+				Console.WriteLine("  2) Piros / Fekete      kifizetés 1:1");
+				Console.WriteLine("  3) Páros / Páratlan    kifizetés 1:1 (a 0 veszít)");
+				Console.WriteLine("  4) Alacsony / Magas    kifizetés 1:1 (a 0 veszít)");
+				Console.WriteLine("  5) Tucat (1-12/13-24/25-36) kifizetés 2:1 (a 0 veszít)");
+				Console.WriteLine("  6) Oszlop (1./2./3.)   kifizetés 2:1 (a 0 veszít)");
+				Console.WriteLine("  0) Mégse");
+				Console.Write("Választás: ");
 
-                var input = (Console.ReadLine() ?? string.Empty).Trim();
+				var input = (Console.ReadLine() ?? string.Empty).Trim();
                 Console.WriteLine();
 
                 if (input == "0")
@@ -82,76 +82,77 @@ namespace CasinoMinigames
 
                 if (!int.TryParse(input, out int option) || option < 1 || option > 6)
                 {
-                    Console.WriteLine("Invalid option. Try again.\n");
-                    continue;
+					Console.WriteLine("Érvénytelen opció. Próbálja újra.\n");
+					continue;
                 }
 
                 switch (option)
                 {
                     case 1:
                         {
-                            int number = PromptInt("Number (0-36): ", 0, 36);
-                            return RouletteBet.StraightUp(number);
-                        }
+							int szam = PromptInt("Szám (0-36): ", 0, 36);
+							return RouletteBet.StraightUp(szam);
+						}
 
-                    case 2:
-                        {
-                            var color = PromptRedBlack();
-                            return RouletteBet.Color(color);
-                        }
+					case 2:
+						{
+							var szin = PromptRedBlack();
+							return RouletteBet.Color(szin);
+						}
 
-                    case 3:
-                        {
-                            var eo = PromptEnum("Even or Odd? (e/o): ",
-                                ("e", RouletteEvenOdd.Even),
-                                ("o", RouletteEvenOdd.Odd));
-                            return RouletteBet.EvenOdd(eo);
-                        }
+					case 3:
+						{
+							var ps = PromptEnum("Páros vagy páratlan? (p/t): ",
+								("p", RouletteEvenOdd.Even),
+								("t", RouletteEvenOdd.Odd));
+							return RouletteBet.EvenOdd(ps);
+						}
 
-                    case 4:
-                        {
-                            var hl = PromptEnum("Low or High? (l/h): ",
-                                ("l", RouletteHighLow.Low),
-                                ("h", RouletteHighLow.High));
-                            return RouletteBet.HighLow(hl);
-                        }
+					case 4:
+						{
+							var am = PromptEnum("Alacsony vagy magas? (a/m): ",
+								("a", RouletteHighLow.Low),
+								("m", RouletteHighLow.High));
+							return RouletteBet.HighLow(am);
+						}
 
-                    case 5:
-                        {
-                            var dozen = PromptEnum("Dozen? (1/2/3): ",
-                                ("1", RouletteDozen.First),
-                                ("2", RouletteDozen.Second),
-                                ("3", RouletteDozen.Third));
-                            return RouletteBet.Dozen(dozen);
-                        }
+					case 5:
+						{
+							var tucat = PromptEnum("Tucat? (1/2/3): ",
+								("1", RouletteDozen.First),
+								("2", RouletteDozen.Second),
+								("3", RouletteDozen.Third));
+							return RouletteBet.Dozen(tucat);
+						}
 
-                    case 6:
-                        {
-                            var column = PromptEnum("Column? (1/2/3): ",
-                                ("1", RouletteColumn.First),
-                                ("2", RouletteColumn.Second),
-                                ("3", RouletteColumn.Third));
-                            return RouletteBet.Column(column);
-                        }
-                }
-            }
+					case 6:
+						{
+							var oszlop = PromptEnum("Oszlop? (1/2/3): ",
+								("1", RouletteColumn.First),
+								("2", RouletteColumn.Second),
+								("3", RouletteColumn.Third));
+							return RouletteBet.Column(oszlop);
+						}
+
+				}
+			}
         }
 
         private static RouletteColor PromptRedBlack()
         {
             while (true)
-            {
-                Console.Write("Red or Black? (r/b): ");
-                var input = (Console.ReadLine() ?? string.Empty).Trim().ToLowerInvariant();
+			{
+				Console.Write("Piros vagy fekete? (p/f): ");
+				var input = (Console.ReadLine() ?? string.Empty).Trim().ToLowerInvariant();
 
-                if (input == "r") return RouletteColor.Red;
-                if (input == "b") return RouletteColor.Black;
+				if (input == "p") return RouletteColor.Red;
+				if (input == "f") return RouletteColor.Black;
 
-                Console.WriteLine("Invalid choice. Enter r or b.\n");
-            }
-        }
+				Console.WriteLine("Érvénytelen választás. Adj meg p-t vagy f-et.\n");
+			}
+		}
 
-        private static int PromptInt(string prompt, int minInclusive, int maxInclusive)
+		private static int PromptInt(string prompt, int minInclusive, int maxInclusive)
         {
             while (true)
             {
@@ -159,7 +160,7 @@ namespace CasinoMinigames
                 var input = Console.ReadLine();
                 if (!int.TryParse(input, out int value) || value < minInclusive || value > maxInclusive)
                 {
-                    Console.WriteLine($"Invalid number. Enter {minInclusive}-{maxInclusive}.\n");
+                    Console.WriteLine($"Érvénytelen szám. Adjon meg egy értéket {minInclusive} és {maxInclusive} között.\n");
                     continue;
                 }
 
@@ -183,7 +184,7 @@ namespace CasinoMinigames
                     }
                 }
 
-                Console.WriteLine("Invalid choice. Try again.\n");
+                Console.WriteLine("Érvénytelen választás.\n");
             }
         }
     }
