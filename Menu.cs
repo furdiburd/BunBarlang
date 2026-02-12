@@ -56,7 +56,7 @@ namespace CasinoMinigames
 			Console.WriteLine("=================================");
 			Console.WriteLine();
 			Console.WriteLine($"Egyenleg: {_player.Credits}");
-			Console.WriteLine("Használja a ↑/↓ nyilakat a navigáláshoz");
+			Console.WriteLine("Használja a fel/le nyilakat a navigáláshoz");
 			Console.WriteLine("Nyomjon Entert a kiválasztáshoz");
 			Console.WriteLine();
 
