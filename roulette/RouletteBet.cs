@@ -32,21 +32,11 @@ namespace CasinoMinigames
 
         public static RouletteBet StraightUp(int number)
         {
-            if (number < 0 || number > 36)
-            {
-				throw new ArgumentOutOfRangeException(nameof(number), "A rulett számnak 0 és 36 között kell lennie.");
-			}
-
             return new RouletteBet(RouletteBetKind.StraightUp, number: number);
         }
 
         public static RouletteBet Color(RouletteColor color)
         {
-            if (color == RouletteColor.Green)
-            {
-				throw new ArgumentException("Az európai rultetten a zöld nem érvényes szín a fogadáshoz.", nameof(color));
-			}
-
             return new RouletteBet(RouletteBetKind.Color, color: color);
         }
 
@@ -60,11 +50,6 @@ namespace CasinoMinigames
 
         public bool TryGetProfit(int betAmount, RoulettePocket pocket, out int profit)
         {
-            if (betAmount <= 0) // should never runbecause of Player.CanBet check, but just in case
-			{
-                throw new ArgumentOutOfRangeException(nameof(betAmount));
-            }
-
             profit = 0;
 
             switch (_kind)

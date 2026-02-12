@@ -11,18 +11,8 @@ namespace CasinoMinigames
 
         public Menu(List<GameBase> games, Player player)
         {
-            if (games == null)
-            {
-                throw new ArgumentNullException(nameof(games), "A játék lista nem lehet null.");
-            }
-
-            if (games.Count == 0)
-            {
-                throw new ArgumentException("A játlk lista nem lehet üres, legalább 1 kell.", nameof(games));
-            }
-
             _games = games;
-            _player = player ?? throw new ArgumentNullException(nameof(player));
+            _player = player;
             _selectedIndex = 0;
         }
 

@@ -7,7 +7,7 @@ namespace CasinoMinigames
 
         public RouletteWheel(Random rng)
         {
-            _rng = rng ?? throw new ArgumentNullException(nameof(rng));
+            _rng = rng;
             _pockets = CreateEuropeanPockets();
         }
 

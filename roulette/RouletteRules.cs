@@ -34,11 +34,6 @@ namespace CasinoMinigames
 
         public static RouletteColumn GetColumn(int number)
         {
-            if (number < 1 || number > 36)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number));
-            }
-
             int mod = number % 3;
             return mod switch
             {
