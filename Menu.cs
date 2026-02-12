@@ -65,7 +65,7 @@ namespace CasinoMinigames
                 if (i == _selectedIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"  ► {_games[i].Name}");
+                    Console.WriteLine($"  > {_games[i].Name}");
                     Console.ResetColor();
                 }
                 else
@@ -77,7 +77,7 @@ namespace CasinoMinigames
             if (_selectedIndex == _games.Count)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"  ► {QuitOption}");
+                Console.WriteLine($"  > {QuitOption}");
                 Console.ResetColor();
             }
             else
