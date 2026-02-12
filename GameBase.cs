@@ -10,21 +10,6 @@ namespace CasinoMinigames
 
         public void Play(Player player)
         {
-            if (player == null)
-            {
-                throw new ArgumentNullException(nameof(player));
-            }
-
-            if (player.Credits <= 0)
-            { // mindig hamarabb mész csõdbe mint hogy ez lefusson
-                Console.Clear();
-                RenderHeader();
-                Console.WriteLine("Elfogyott a kredited. A játék folytatásához tölts fel többet.");
-                Console.WriteLine();
-                Console.WriteLine("Nyomjon meg egy tetszõleges billentyût a fõmenübe való visszatéréshez...");
-                Console.ReadKey(true);
-                return;
-            }
 
             int bet = PromptForBet(player);
             if (bet == 0)

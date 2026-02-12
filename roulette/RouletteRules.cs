@@ -26,10 +26,6 @@ namespace CasinoMinigames
 
         public static RouletteDozen GetDozen(int number)
         {
-            if (number < 1 || number > 36)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number));
-            }
 
             if (number <= 12) return RouletteDozen.First;
             if (number <= 24) return RouletteDozen.Second;

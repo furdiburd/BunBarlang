@@ -60,8 +60,8 @@ namespace CasinoMinigames
 
         public bool TryGetProfit(int betAmount, RoulettePocket pocket, out int profit)
         {
-            if (betAmount <= 0)
-            {
+            if (betAmount <= 0) // should never runbecause of Player.CanBet check, but just in case
+			{
                 throw new ArgumentOutOfRangeException(nameof(betAmount));
             }
 
