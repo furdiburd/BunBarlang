@@ -2,131 +2,70 @@ namespace CasinoMinigames
 {
     public class Menu
     {
-        private readonly List<GameBase> _games;
-        private readonly Player _player;
-        private int _selectedIndex;
-        private const string QuitOption = "Quit";
-
-        // Initializes a new instance of the Menu class.
-        public Menu(List<GameBase> games, Player player)
+        public void Run(List<GameBase> games, Player player)
         {
-            if (games == null)
+            if (games == null || games.Count == 0)
             {
-                throw new ArgumentNullException(nameof(games), "Games list cannot be null.");
+                Console.WriteLine("Nincs elérhető játék.");
+                return;
             }
 
-            if (games.Count == 0)
+            if (player == null)
             {
-                throw new ArgumentException("Games list cannot be empty. At least one game must be provided.", nameof(games));
+                Console.WriteLine("Hiányzik a játékos.");
+                return;
             }
 
-            _games = games;
-            _player = player ?? throw new ArgumentNullException(nameof(player));
-            _selectedIndex = 0;
-        }
-
-        public void Run()
-        {
-            bool running = true;
-
-            while (running)
+            while (true)
             {
-                if (_player.Credits <= 0)
+                if (player.Credits <= 0)
                 {
-                    ShowBankruptScreen();
+                    Console.WriteLine("Nincs több kredited. Köszönjük a játékot!");
+                    Console.ReadKey(true);
                     return;
                 }
 
-                DisplayMenu();
-                var key = Console.ReadKey(true);
-
-                switch (key.Key)
+                int choice = PromptSelection(games, player.Credits);
+                if (choice == 0)
                 {
-                    case ConsoleKey.UpArrow:
-                        AdjustSelection(-1);
-                        break;
-
-                    case ConsoleKey.DownArrow:
-                        AdjustSelection(1);
-                        break;
-
-                    case ConsoleKey.Enter:
-                        running = HandleSelection();
-                        break;
+                    Console.Clear();
+                    Console.WriteLine("Köszönjük a játékot! Viszlát!");
+                    return;
                 }
+
+                games[choice - 1].Play(player);
             }
         }
 
-        private void DisplayMenu()
+        private static int PromptSelection(List<GameBase> games, int credits)
         {
             Console.Clear();
             Console.WriteLine("=================================");
-            Console.WriteLine("      CASINO MINIGAME MENU       ");
+            Console.WriteLine("        KASZINÓ JÁTÉKMENÜ        ");
             Console.WriteLine("=================================");
             Console.WriteLine();
-            Console.WriteLine($"Credits: {_player.Credits}");
-            Console.WriteLine("Use ↑/↓ arrow keys to navigate");
-            Console.WriteLine("Press Enter to select");
+            Console.WriteLine($"Kreditek: {credits}");
             Console.WriteLine();
 
-            for (int i = 0; i < _games.Count; i++)
+            for (int i = 0; i < games.Count; i++)
             {
-                if (i == _selectedIndex)
+                Console.WriteLine($"  {i + 1}) {games[i].Name}");
+            }
+
+            Console.WriteLine("  0) Kilépés");
+            Console.WriteLine();
+            Console.Write("Válassz: ");
+
+            while (true)
+            {
+                var input = Console.ReadLine();
+                if (int.TryParse(input, out int value) && value >= 0 && value <= games.Count)
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"  ► {_games[i].Name}");
-                    Console.ResetColor();
+                    return value;
                 }
-                else
-                {
-                    Console.WriteLine($"    {_games[i].Name}");
-                }
+
+                Console.Write($"Érvénytelen. Add meg 0-{games.Count}: ");
             }
-
-            // Display quit option
-            if (_selectedIndex == _games.Count)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"  ► {QuitOption}");
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.WriteLine($"    {QuitOption}");
-            }
-        }
-
-        private void AdjustSelection(int delta)
-        {
-            int totalOptions = _games.Count + 1; // games + Quit
-            _selectedIndex = (_selectedIndex + delta + totalOptions) % totalOptions;
-        }
-
-        private bool HandleSelection()
-        {
-            if (_selectedIndex == _games.Count)
-            {
-                Console.Clear();
-                Console.WriteLine("Thank you for playing! Goodbye!");
-                return false;
-            }
-
-            // Play the selected game
-            _games[_selectedIndex].Play(_player);
-            return true;
-        }
-
-        private void ShowBankruptScreen()
-        {
-            Console.Clear();
-            Console.WriteLine("=================================");
-            Console.WriteLine("       YOU WENT BANKRUPT         ");
-            Console.WriteLine("=================================");
-            Console.WriteLine();
-            Console.WriteLine("You have no credits left. Thanks for playing!");
-            Console.WriteLine();
-            Console.WriteLine("Press any key to exit..."); // Better than instant exit
-            Console.ReadKey(true);
         }
     }
 }

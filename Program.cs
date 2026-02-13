@@ -14,8 +14,8 @@
                 new BlackjackGame()
             };
 
-            var menu = new Menu(games, player);
-            menu.Run();
+            var menu = new Menu();
+            menu.Run(games, player);
         }
     }
 }
