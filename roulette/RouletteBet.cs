@@ -32,21 +32,11 @@ namespace CasinoMinigames
 
         public static RouletteBet StraightUp(int number)
         {
-            if (number < 0 || number > 36)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number), "Roulette number must be between 0 and 36.");
-            }
-
             return new RouletteBet(RouletteBetKind.StraightUp, number: number);
         }
 
         public static RouletteBet Color(RouletteColor color)
         {
-            if (color == RouletteColor.Green)
-            {
-                throw new ArgumentException("Green is not a valid color bet on European roulette.", nameof(color));
-            }
-
             return new RouletteBet(RouletteBetKind.Color, color: color);
         }
 
@@ -60,11 +50,6 @@ namespace CasinoMinigames
 
         public bool TryGetProfit(int betAmount, RoulettePocket pocket, out int profit)
         {
-            if (betAmount <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(betAmount));
-            }
-
             profit = 0;
 
             switch (_kind)
@@ -136,14 +121,14 @@ namespace CasinoMinigames
         {
             return _kind switch
             {
-                RouletteBetKind.StraightUp => $"Number: {_number}",
-                RouletteBetKind.Color => $"Color: {_color}",
-                RouletteBetKind.EvenOdd => $"Even/Odd: {_evenOdd}",
-                RouletteBetKind.HighLow => $"Low/High: {_highLow}",
-                RouletteBetKind.Dozen => $"Dozen: {_dozen}",
-                RouletteBetKind.Column => $"Column: {_column}",
-                _ => _kind.ToString()
-            };
+				RouletteBetKind.StraightUp => $"Szám: {_number}",
+				RouletteBetKind.Color => $"Szín: {_color}",
+				RouletteBetKind.EvenOdd => $"Páros/Páratlan: {_evenOdd}",
+				RouletteBetKind.HighLow => $"Alacsony/Magas: {_highLow}",
+				RouletteBetKind.Dozen => $"Tucat: {_dozen}",
+				RouletteBetKind.Column => $"Oszlop: {_column}",
+				_ => _kind.ToString()
+			};
         }
     }
 }

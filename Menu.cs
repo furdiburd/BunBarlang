@@ -1,6 +1,8 @@
 namespace CasinoMinigames
 {
-    public class Menu
+	// Rábai Miklós
+	// Heim Péter
+	public class Menu
     {
         public void Run(List<GameBase> games, Player player)
         {

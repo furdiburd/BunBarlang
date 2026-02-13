@@ -26,10 +26,6 @@ namespace CasinoMinigames
 
         public static RouletteDozen GetDozen(int number)
         {
-            if (number < 1 || number > 36)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number));
-            }
 
             if (number <= 12) return RouletteDozen.First;
             if (number <= 24) return RouletteDozen.Second;
@@ -38,11 +34,6 @@ namespace CasinoMinigames
 
         public static RouletteColumn GetColumn(int number)
         {
-            if (number < 1 || number > 36)
-            {
-                throw new ArgumentOutOfRangeException(nameof(number));
-            }
-
             int mod = number % 3;
             return mod switch
             {
